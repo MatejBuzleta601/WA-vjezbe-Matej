@@ -1,2 +1,2 @@
-# WA-vje-be-Matej
+# WA-vježbe-Matej
 Zadaci sa Web aplikacija vježbi.
