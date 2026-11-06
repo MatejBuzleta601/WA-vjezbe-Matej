@@ -1,0 +1,25 @@
+{
+  "name": "wa-vje-be-matej",
+  "version": "1.0.0",
+  "description": "vjezbaMatej",
+  "homepage": "https://github.com/MatejBuzleta601/WA-vje-be-Matej#readme",
+  "bugs": {
+    "url": "https://github.com/MatejBuzleta601/WA-vje-be-Matej/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatejBuzleta601/WA-vje-be-Matej.git"
+  },
+  "license": "ISC",
+  "author": "Matej",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "node": "^26.13.0",
+    "nodemon": "^3.1.14"
+  }
+}
