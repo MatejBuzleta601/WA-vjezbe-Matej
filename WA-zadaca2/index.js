@@ -1,11 +1,11 @@
 import express from "express";
 import path from "path";
 const app = express();
-// Naglašavamo da će server obrađivati JSON u zahtjevima koji dolaze
+
 app.use(express.json());
 const PORT = 3000;
 
-const pizze = [
+let pizze = [
     { id: 1, naziv: 'Margherita', cijena: 6.5 },
     { id: 2, naziv: 'Capricciosa', cijena: 8.0 },
     { id: 3, naziv: 'Quattro formaggi', cijena: 10.0 },
@@ -13,7 +13,9 @@ const pizze = [
     { id: 5, naziv: 'Vegetariana', cijena: 9.0 }
 ];
 
-let narudzbe = {};
+let narudzbe = [
+    { id: 1, ime: 'Matej', adresa: 'Nobileova 27', pizza: 'Margherita' }
+];
 
 app.get('/', (req, res) => {
     console.log("HELLO WORLD!");
@@ -53,30 +55,28 @@ app.get("/pizze/:naziv", (req, res) => {
 });
 
 app.get('/narudzbe', (req, res) => {
-    console.log("Pozvana je GET metoda na /pizze endpoint")
-    if (!narudzdbe.length) {
-        return res.status(404).json({ message: "Nema narudžbi!" });
+    console.log("Pozvana je GET metoda na /narudzbe endpoint");
+    if (narudzbe.length == 0) {
+        return res.status(404).json({ poruka: "Nema narudzba" });
     }
     return res.status(200).json(narudzbe); // 200 OK
 });
 
 app.get('/narudzbe/:id', (req, res) => {
-    console.log("Pozvana je GET metoda na /narudzbe endpoint");
+    console.log("Pozvana je GET metoda na /narudzbe/:id endpoint");
     let id_param = req.params.id;
 
     if (isNaN(id_param)) {
         return res.status(400).json({ message: "Id mora biti broj" });
+    };
+
+    let narudzba = narudzbe.find(narudzba => narudzba.id == id_param);
+
+    if (narudzba) {
+        return res.status(200).json(narudzba); // 200 OK
     }
 
-    let narudzba = narudzbe.find(
-        (n) => n.id == id_param,
-    );
-
-    if (!naruzdba) {
-        return res.status(404).json({ message: "Ta pizza ne postoji!" });
-    }
-
-    res.status(200).json(narudzba); // 200 OK
+    return res.status(404).json({ message: "Nema te narudzbe!" });
 });
 
 // REST API GUIDELINES/PRINCIPI
@@ -87,21 +87,18 @@ app.get('/narudzbe/:id', (req, res) => {
 
 // validacija podataka u dolaznom HTTP zahtjevu (bitno za kolokvij)
 
-app.post("/pizze", (req, res) => {
-    let nova_pizza = req.body;
-    let pizza_postoji = pizze.find((pizza) => pizza.naziv.toLocaleLowerCase() == nova_pizza.naziv.toLocaleLowerCase());
+app.post("/narudzbe", (req, res) => {
+    let narudzbe_dodavanje = req.body;
+    let pizza_postoji = pizze.find(pizza => pizza.naziv.toLocaleLowerCase() == narudzbe_dodavanje.pizza.toLocaleLowerCase());
 
-    if (pizza_postoji) {
-        return res
-            .status(409)
-            .json({ message: "Pizza s tim nazivom već postoji!" });
+    if (!pizza_postoji) {
+        return res.status(400).json({ message: "Pizza s tim nazivom ne postoji!" });
     }
-
     // else pizza postoji, dodaj je
-    let novi_id = pizze.at(-1).id + 1;
-    nova_pizza.id = novi_id;
-    pizze.push(nova_pizza);
-    return res.status(201).json({ message: "Pizza je dodana!", pizze: pizze });
+    const novi_id = narudzbe.at(-1)['id'] + 1;
+
+    narudzbe.push({ id: novi_id, ...narudzbe_dodavanje });
+    res.json(narudzbe);
 });
 
 app.listen(PORT, error => {
